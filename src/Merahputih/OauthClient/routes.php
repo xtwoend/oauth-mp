@@ -17,11 +17,11 @@ Route::get('oauth/login', function(){
 		{
 			$userdata = $mp->api('userdata');
 
-			$auth = \Merahputih\OauthClient\MPUser::where('usn_name','=', $userdata['username'])->first();
+			//$auth = \Merahputih\OauthClient\MPUser::where('usn_name','=', $userdata['username'])->first();
 
 			//dd($auth->uid);
 
-			$user = \User::find($auth->uid);
+			$user = \User::where('email','=', $userdata['email'])->first();
 			
 			//dd($user);
 
@@ -36,7 +36,7 @@ Route::get('oauth/login', function(){
 				$user->state_name = $userdata['state_name'];
 				$user->city_name = $userdata['city_name'];
 				$user->password = Hash::make(str_random(40));
-				$user->id = $auth->uid;
+				//$user->id = $auth->uid;
 				$user->save();
 		
 			}
@@ -50,13 +50,11 @@ Route::get('oauth/login', function(){
 
 
 
-Route::get('oauth/logout', function()
-{
-		\Auth::logout();
+Route::get('oauth/logout', function(){
 		
-		@session_start();
+		$mp = App::make('Merahputih\MpApi');
 
-		@session_destroy();
+		\Auth::logout();
 
-		return \Redirect::to('/')->withErrors(array('logout success'));
+		return Redirect::to($mp->getLogoutUrl());
 });
