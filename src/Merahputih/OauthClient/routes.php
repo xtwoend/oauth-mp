@@ -56,5 +56,5 @@ Route::get('oauth/logout', function(){
 
 		\Auth::logout();
 
-		return Redirect::to($mp->getLogoutUrl());
+		return Redirect::to($mp->getLogoutUrl(['redirect_uri'=> url('/')]));
 });
